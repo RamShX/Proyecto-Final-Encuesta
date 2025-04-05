@@ -2,11 +2,11 @@
 
 namespace Domain.Interfeces
 {
-    public interface IUsuarioRepository<T> where T : class
+    public interface IUsuarioRepository
 
     {
-        Task<IEnumerable<T>> GetAllUsuarios();
-        Task<Usuario> AddUsuario(T entity);
+        Task<IEnumerable<Usuario>> GetAllUsuarios();
+        Task<Usuario> AddUsuario(Usuario usuario);
 
     }
 }
