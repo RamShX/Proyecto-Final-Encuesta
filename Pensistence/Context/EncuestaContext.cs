@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pensistence.Context
 {
-    public class AppContext : DbContext
+    public class EncuestaContext : DbContext
     {
-        public AppContext(DbContextOptions<AppContext> options) : base(options)
+        public EncuestaContext(DbContextOptions<EncuestaContext> options) : base(options)
         {
         }
         public DbSet<Usuario> Usuarios { get; set; }
@@ -14,7 +14,7 @@ namespace Pensistence.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(EncuestaContext).Assembly);
 
             //Configurar la relación entre Usuario y Rol
             modelBuilder.Entity<Usuario>()
