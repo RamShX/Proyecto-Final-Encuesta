@@ -16,10 +16,20 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginUsuarioDto loginUsuarioDto)
+        public async Task<ActionResult<UsuarioRespuestaDto>> Login([FromBody] LoginUsuarioDto loginUsuarioDto)
         {
-            var token = await _authService.LoginUser(loginUsuarioDto);
-            return Ok(new ApiResponse<string> (token, "Inició sesión correctamente!"));
+            try
+            {
+                var usuario = await _authService.LoginUser(loginUsuarioDto);
+                return Ok(new ApiResponse<UsuarioRespuestaDto>(usuario, "Inició sesión correctamente!"));
+
+            }
+            catch (ApplicationException e)
+            {
+
+                return BadRequest(new ApiResponse<string>{Message = e.Message});
+            }
+            
         }
 
         [HttpPost("register")]

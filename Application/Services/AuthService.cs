@@ -17,10 +17,34 @@ namespace Application.Services
 
        
 
-        public async Task<string> LoginUser(LoginUsuarioDto loginUsuarioDto)
+        public async Task<UsuarioRespuestaDto> LoginUser(LoginUsuarioDto loginUsuarioDto)
         {
-            throw new NotImplementedException();
+            // Validar si el email existe y validar la contraseña
+            var usuario = await _usuarioRepository.GetByEmail(loginUsuarioDto.Email);
+
+            if (usuario == null || !VerifyPasswordHash(loginUsuarioDto.Password, usuario.PasswordHash))
+                throw new ArgumentException("Credenciales inválidas");
+
+            // Validar si el usuario está activo
+            if (!usuario.Activo)
+                throw new ArgumentException("El usuario no está activo");
+            
+
+            //Mapear el DTO a la entidad de UsuarioRespuesta
+            UsuarioRespuestaDto dto = new UsuarioRespuestaDto
+            {
+                Email = loginUsuarioDto.Email,
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                RolId = usuario.RolId,
+                Id = usuario.Id
+            };
+
+            return dto;
+
         }
+
+
 
         public async Task<UsuarioRespuestaDto> RegisterUser(RegistrarUsuarioDto registrarUsuarioDto)
         {
