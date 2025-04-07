@@ -15,6 +15,7 @@ namespace WebApi
 
             // Add services to the container.
             builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<UsuarioService>();
 
             builder.Services.AddControllers();
