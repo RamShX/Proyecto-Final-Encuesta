@@ -22,11 +22,24 @@ namespace Pensistence.Repositories
 
         }
 
+        public async Task<bool> ExisteEmail(string email)
+        {
+            return await _context.Usuarios.AnyAsync(u => u.Email == email);
+        }
+
         public async Task<IEnumerable<Usuario>> GetAllUsuarios()
         {
             var usuarios = await _context.Usuarios.ToListAsync();
             return usuarios;
 
+        }
+
+        public async Task<Usuario> GetByEmail(string email)
+        {
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+            if (usuario == null)
+                throw new KeyNotFoundException("El usuario no existe");
+            return usuario;
         }
     }
 }

@@ -19,5 +19,15 @@ namespace Application.Services
         {
             return await _usuarioRepository.AddUsuario(entity);
         }
+
+        public async Task<Usuario> GetByEmail(string email)
+        {
+            return await _usuarioRepository.GetByEmail(email);
+        }
+
+        public async Task<bool> ExisteEmail(string email)
+        {
+            return await _usuarioRepository.ExisteEmail(email);
+        }
     }
 }

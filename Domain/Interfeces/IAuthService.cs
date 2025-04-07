@@ -1,5 +1,6 @@
 ﻿
 using Domain.Dtos;
+using Domain.Models;
 
 namespace Domain.Interfeces
 {

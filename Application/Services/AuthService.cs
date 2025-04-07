@@ -5,14 +5,17 @@ using Domain.Models;
 
 namespace Application.Services
 {
+
     public class AuthService : IAuthService
     {
         private readonly IUsuarioRepository _usuarioRepository;
-
+        
         public AuthService(IUsuarioRepository usuarioRepository)
         {
             _usuarioRepository = usuarioRepository;
         }
+
+       
 
         public async Task<string> LoginUser(LoginUsuarioDto loginUsuarioDto)
         {
@@ -21,9 +24,16 @@ namespace Application.Services
 
         public async Task<UsuarioRespuestaDto> RegisterUser(RegistrarUsuarioDto registrarUsuarioDto)
         {
+            // Validar si el email ya existe
+            var existeEmail = await _usuarioRepository.ExisteEmail(registrarUsuarioDto.Email);
+            if (existeEmail)
+                throw new ArgumentException("El email ya está en uso");
+
+            // Validar si las contraseñas coinciden
             if (registrarUsuarioDto.Password != registrarUsuarioDto.ConfirmacionPassword)
                 throw new ArgumentException("Las contraseñas no coinciden");
 
+            //Mapar el DTO a la entidad usuario
             var usuario = new Usuario
             {
                 Nombre = registrarUsuarioDto.Nombre,
@@ -51,7 +61,7 @@ namespace Application.Services
 
         public bool VerifyPasswordHash(string password, string storedHash)
         {
-            throw new NotImplementedException();
+            return BCrypt.Net.BCrypt.Verify(password, storedHash);
         }
     }
 }

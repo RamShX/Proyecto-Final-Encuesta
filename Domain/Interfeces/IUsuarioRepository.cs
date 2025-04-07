@@ -6,6 +6,8 @@ namespace Domain.Interfeces
 
     {
         Task<IEnumerable<Usuario>> GetAllUsuarios();
+        Task<Usuario> GetByEmail(string email);
+        Task<bool> ExisteEmail(string email);
         Task<Usuario> AddUsuario(Usuario usuario);
 
     }
