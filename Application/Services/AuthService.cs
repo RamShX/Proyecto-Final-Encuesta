@@ -1,4 +1,5 @@
 ﻿
+using AutoMapper;
 using Domain.Dtos;
 using Domain.Interfeces;
 using Domain.Models;
@@ -9,17 +10,21 @@ namespace Application.Services
     public class AuthService : IAuthService
     {
         private readonly IUsuarioRepository _usuarioRepository;
-        
-        public AuthService(IUsuarioRepository usuarioRepository)
+        private readonly IJwtService _jwtService;
+        private readonly IMapper _mapper;
+
+        public AuthService(IUsuarioRepository usuarioRepository,IJwtService service, IMapper mapper)
         {
             _usuarioRepository = usuarioRepository;
+            _jwtService = service;
+            _mapper = mapper;
         }
 
        
 
-        public async Task<UsuarioRespuestaDto> LoginUser(LoginUsuarioDto loginUsuarioDto)
+        public async Task<AuthResponseDto> LoginUser(LoginUsuarioDto loginUsuarioDto)
         {
-            // Validar si el email existe y validar la contraseña
+            // Validar la contraseña y el email
             var usuario = await _usuarioRepository.GetByEmail(loginUsuarioDto.Email);
 
             if (usuario == null || !VerifyPasswordHash(loginUsuarioDto.Password, usuario.PasswordHash))
@@ -29,18 +34,19 @@ namespace Application.Services
             if (!usuario.Activo)
                 throw new ArgumentException("El usuario no está activo");
             
+            var authResult = await _jwtService.GenerarToken(usuario);
 
             //Mapear el DTO a la entidad de UsuarioRespuesta
-            UsuarioRespuestaDto dto = new UsuarioRespuestaDto
+            AuthResponseDto authResponseDto = new AuthResponseDto
             {
-                Email = loginUsuarioDto.Email,
-                Nombre = usuario.Nombre,
-                Apellido = usuario.Apellido,
-                RolId = usuario.RolId,
-                Id = usuario.Id
+                Token = authResult,
+                Expiracion = DateTime.Now.AddMinutes(40),
+                Usuario = _mapper.Map<UsuarioRespuestaDto>(usuario)
+
+
             };
 
-            return dto;
+            return authResponseDto;
 
         }
 
@@ -57,6 +63,7 @@ namespace Application.Services
             if (registrarUsuarioDto.Password != registrarUsuarioDto.ConfirmacionPassword)
                 throw new ArgumentException("Las contraseñas no coinciden");
 
+
             //Mapar el DTO a la entidad usuario
             var usuario = new Usuario
             {
@@ -66,8 +73,8 @@ namespace Application.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registrarUsuarioDto.Password),
                 RolId = registrarUsuarioDto.RolId,
                 Activo = true,
-                CreadoEn = DateTime.UtcNow,
-                ActualizadoEn = DateTime.UtcNow
+                CreadoEn = DateTime.Now,
+                ActualizadoEn = DateTime.Now
             };
 
             // darle respuesta al Frontend
@@ -79,6 +86,7 @@ namespace Application.Services
                 Email = usuario.Email,
                 RolId = usuario.RolId,
             };
+
             await _usuarioRepository.AddUsuario(usuario);
             return UsuarioRespuestaDto;
         }

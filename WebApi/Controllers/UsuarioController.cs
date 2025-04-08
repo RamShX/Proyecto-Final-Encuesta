@@ -1,9 +1,12 @@
 ﻿using Application.Services;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
+
+    
     [ApiController]
     [Route("api/[controller]")]
     public class UsuarioController : ControllerBase
@@ -15,6 +18,7 @@ namespace WebApi.Controllers
             _usuarioService = usuarioService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllUsuarios()
         {
@@ -22,6 +26,7 @@ namespace WebApi.Controllers
             return Ok(usuarios);
         }
 
+        [Authorize(Policy = "Roles = admin")]
         [HttpPost]
         public async Task<IActionResult> AddUsuario([FromBody] Usuario usuario)
         {

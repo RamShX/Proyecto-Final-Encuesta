@@ -1,5 +1,6 @@
 ﻿using Domain.Dtos;
 using Domain.Interfeces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Response;
 
@@ -15,13 +16,14 @@ namespace WebApi.Controllers
             _authService = authService;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<UsuarioRespuestaDto>> Login([FromBody] LoginUsuarioDto loginUsuarioDto)
+        public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginUsuarioDto loginUsuarioDto)
         {
             try
             {
                 var usuario = await _authService.LoginUser(loginUsuarioDto);
-                return Ok(new ApiResponse<UsuarioRespuestaDto>(usuario, "Inició sesión correctamente!"));
+                return Ok(new ApiResponse<AuthResponseDto>(usuario, "Inició sesión correctamente!"));
 
             }
             catch (ApplicationException e)
@@ -32,6 +34,7 @@ namespace WebApi.Controllers
             
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegistrarUsuarioDto registrarUsuarioDto)
         {

@@ -36,7 +36,9 @@ namespace Pensistence.Repositories
 
         public async Task<Usuario> GetByEmail(string email)
         {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+            var usuario = await _context.Usuarios
+                                                .Include(u => u.Rol)
+                                                .FirstOrDefaultAsync(u => u.Email == email);
             if (usuario == null)
                 throw new KeyNotFoundException("El usuario no existe");
             return usuario;
