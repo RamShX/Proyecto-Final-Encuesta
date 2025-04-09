@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Domain.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Domain.Models
 {
-    public class Usuario
+    public class Usuario : AuditableEntitiy
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
@@ -13,15 +14,14 @@ namespace Domain.Models
         public string PasswordHash { get; set; }
         [Column("rol_id")]
         public int RolId { get; set; } //Llave foranea de la tabla rol
-        public bool Activo { get; set; }
-        [Column("creado_en")]
-        public DateTime CreadoEn { get; set; }
-        [Column("actualizado_en")]
-        public DateTime ActualizadoEn { get; set; }
+        
 
         //Navegacion usuario puede tener un rol
         [JsonIgnore]
         public virtual Rol Rol { get; set; }
+        //Navegacion usuario puede tener muchas encuestas
+        [JsonIgnore]
+        public virtual ICollection<Encuesta> Encuestas { get; set; } = new HashSet<Encuesta>();
 
     }
 }
