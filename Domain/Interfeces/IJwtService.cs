@@ -1,6 +1,5 @@
-﻿using Domain.Dtos;
+﻿
 using Domain.Models;
-using Google.Protobuf.WellKnownTypes;
 
 namespace Domain.Interfeces
 {

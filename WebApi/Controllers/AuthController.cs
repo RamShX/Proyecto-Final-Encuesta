@@ -6,6 +6,7 @@ using WebApi.Response;
 
 namespace WebApi.Controllers
 {
+    [AllowAnonymous]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -16,7 +17,6 @@ namespace WebApi.Controllers
             _authService = authService;
         }
 
-        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginUsuarioDto loginUsuarioDto)
         {
@@ -34,7 +34,7 @@ namespace WebApi.Controllers
             
         }
 
-        [AllowAnonymous]
+        
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegistrarUsuarioDto registrarUsuarioDto)
         {
