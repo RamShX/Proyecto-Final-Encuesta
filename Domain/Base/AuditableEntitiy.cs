@@ -10,6 +10,6 @@ namespace Domain.Base
         public DateTime CreadoEn { get; set; }
         [Column("actualizado_en")]
         public DateTime ActualizadoEn { get; set; }
-        public bool Activo { get; set; } = true;
+        
     }
 }

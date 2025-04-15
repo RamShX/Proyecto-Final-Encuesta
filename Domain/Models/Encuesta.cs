@@ -12,7 +12,11 @@ namespace Domain.Models
         public bool EsPublica { get; set; }
         [Column("enlace_publico")]
         public string EnlacePublico { get; set; }
-        public bool Activo { get; set; }
+        [Column("fecha_inicio")]
+        public DateTime FechaInicio { get; set; }
+        [Column("fecha_expiracion")]
+        public DateTime FechaExpiracion { get; set; }
+        public bool Activo { get; set; } = true;
         [Column("creador_id")]
         public int UsuarioId { get; set; } //Llave foranea de la tabla usuario
 

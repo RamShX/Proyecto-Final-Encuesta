@@ -30,7 +30,7 @@ namespace Pensistence.JWT
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddMinutes(40);
+            var expires = DateTime.Now.AddMinutes(2);
 
             var TokenDescriptor = new JwtSecurityToken(
 

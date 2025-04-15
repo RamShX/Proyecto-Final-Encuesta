@@ -24,6 +24,8 @@ namespace WebApi
             builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IJwtService, JwtRepository>();
+            builder.Services.AddScoped<IEncuestaRepository, EncuestaRepository>();
+            builder.Services.AddScoped<EncuestaService>();
             builder.Services.AddScoped<UsuarioService>();
 
             builder.Services.AddControllers();
@@ -47,12 +49,40 @@ namespace WebApi
                     ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
                 };
+
+                //Personalizar el mensaje de error
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token expirado", "true");
+                        }
+                        return Task.CompletedTask;
+                    },
+
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = 401;
+                        context.Response.ContentType = "application/json";
+                        return context.Response.WriteAsync("{\"error\": \"No estás autenticado.\"}");
+                    },
+
+                    OnForbidden = context =>
+                    {
+                        context.Response.StatusCode = 403;
+                        context.Response.ContentType = "application/json";
+                        return context.Response.WriteAsync("{\"error\": \"No tienes permisos de administrador.\"}");
+                    }
+                };
             });
 
             // politica de autorizacion
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy("Roles = Admin", policy => policy.RequireRole("admin"));
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
             });
 
             // Configurar CORS

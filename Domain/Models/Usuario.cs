@@ -14,7 +14,8 @@ namespace Domain.Models
         public string PasswordHash { get; set; }
         [Column("rol_id")]
         public int RolId { get; set; } //Llave foranea de la tabla rol
-        
+        public bool Activo { get; set; } = true;
+
 
         //Navegacion usuario puede tener un rol
         [JsonIgnore]
