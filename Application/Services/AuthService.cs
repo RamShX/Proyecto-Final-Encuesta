@@ -56,6 +56,7 @@ namespace Application.Services
         {
             // Validar si el email ya existe
             var existeEmail = await _usuarioRepository.ExisteEmail(registrarUsuarioDto.Email);
+      
             if (existeEmail)
                 throw new ArgumentException("El email ya está en uso");
 
@@ -63,6 +64,9 @@ namespace Application.Services
             if (registrarUsuarioDto.Password != registrarUsuarioDto.ConfirmacionPassword)
                 throw new ArgumentException("Las contraseñas no coinciden");
 
+            // Validar que la contraseña tenga al menos 6 caracteres
+            if (registrarUsuarioDto.Password.Length < 6)
+                throw new ArgumentException("La contraseña debe tener al menos 6 caracteres");
 
             //Mapar el DTO a la entidad usuario
             var usuario = new Usuario

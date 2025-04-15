@@ -19,8 +19,7 @@ namespace Domain.Models
         //Navegacion usuario puede tener un rol
         [JsonIgnore]
         public virtual Rol Rol { get; set; }
-        //Navegacion usuario puede tener muchas encuestas
-        [JsonIgnore]
+        //Navegacion usuario puede tener muchas encuestas e inicializarla vacía
         public virtual ICollection<Encuesta> Encuestas { get; set; } = new HashSet<Encuesta>();
 
     }
