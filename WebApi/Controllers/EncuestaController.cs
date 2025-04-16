@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
 using Domain.Dtos;
 using AutoMapper;
+using WebApi.Response;
 
 namespace WebApi.Controllers
 {
@@ -25,7 +26,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> AddEncuesta([FromBody] CrearEncuestaDto encuestaDto)
         {
             if (encuestaDto == null)
-                return BadRequest("La encuesta no puede ser null");
+                return BadRequest(new ApiResponse<string>("La encuesta no puede ser null"));
 
             try
             {
@@ -33,15 +34,16 @@ namespace WebApi.Controllers
                 var encuesta = _mapper.Map<Encuesta>(encuestaDto);
 
                 var nuevaEncuesta = await _encuestaService.AddEncuesta(encuesta);
-                return CreatedAtAction(nameof(GetById), new { id = nuevaEncuesta.Id }, nuevaEncuesta);
+                return CreatedAtAction(nameof(GetById), new { id = nuevaEncuesta.Id }, 
+                    new ApiResponse<Encuesta>(encuesta, "Encuesta creada correctamente"));
             }
             catch (ArgumentException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ApiResponse<string>(e.Message));
             }
             catch (Exception)
             {
-                return StatusCode(500, "Ocurrió un error inesperado");
+                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
             }
 
 
@@ -52,19 +54,19 @@ namespace WebApi.Controllers
         {
             var encuesta = await _encuestaService.GetById(id);
             if (encuesta == null)
-                return NotFound("Encuesta no encontrado");
+                return NotFound(new ApiResponse<string>("Encuesta no encontrado"));
 
             try
             {
-                return Ok(encuesta);
+                return Ok(new ApiResponse<Encuesta>(encuesta, "Encuesta obtenida con éxito"));
             }
             catch (ArgumentException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ApiResponse<string>(e.Message));
             }
             catch (Exception)
             {
-                return StatusCode(500, "Ocurrió un error inesperado");
+                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
             }
         }
 
@@ -74,15 +76,15 @@ namespace WebApi.Controllers
             try
             {
                 var encuestas = await _encuestaService.GetAllEncuestas();
-                return Ok(encuestas);
+                return Ok(new ApiResponse<IEnumerable<Encuesta>>(encuestas, "Encuestas obtenidas con éxito"));
             }
             catch (ArgumentException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ApiResponse<string>(e.Message));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ocurrió un error inesperado: {ex.Message}");
+                return StatusCode(500, new ApiResponse<string>($"Ocurrió un error inesperado: {ex.Message}"));
             }
         }
 
@@ -96,17 +98,18 @@ namespace WebApi.Controllers
                 var actualizado = await _encuestaService.UpdateEncuesta(id, encuesta);
 
                 if (actualizado)
-                    return NoContent();
+                    return Ok(new ApiResponse<string>("Encuesta actualizada correctamente"));
                 else
-                    return BadRequest("No se pudo actualizar la encuesta");
+                    return BadRequest(new ApiResponse<string>("No se pudo actualizar la encuesta"));
+
             }
             catch (ArgumentException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ApiResponse<string>(e.Message));
             }
             catch (Exception)
             {
-                return StatusCode(500, "Ocurrió un error inesperado");
+                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
             }
         }
 
@@ -118,19 +121,19 @@ namespace WebApi.Controllers
             {
                 var resultado = await _encuestaService.DeleteEncuesta(id);
 
+
                 if (resultado)
-                    // Respuesta 204 si se eliminó con éxito.
-                    return NoContent();
+                    return Ok(new ApiResponse<string>("Encuesta eliminada correctamente"));
                 else
-                    return BadRequest("No se pudo eliminar la encuesta");
+                    return BadRequest(new ApiResponse<string>("No se pudo eliminar la encuesta"));
             }
             catch (ArgumentException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ApiResponse<string>(e.Message));
             }
             catch (Exception)
             {
-                return StatusCode(500, "Ocurrió un error inesperado");
+                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
             }
         }
     }
