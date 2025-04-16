@@ -81,7 +81,8 @@ namespace WebApi.Controllers
             try
             {
                 var encuestas = await _encuestaService.GetAllEncuestas();
-                return Ok(new ApiResponse<IEnumerable<Encuesta>>(encuestas, "Encuestas obtenidas con éxito"));
+                var encuestaDto = _mapper.Map<IEnumerable<EncuestaRespuestaDto>>(encuestas);
+                return Ok(new ApiResponse<IEnumerable<EncuestaRespuestaDto>>(encuestaDto, "Encuestas obtenidas con éxito"));
             }
             catch (ArgumentException e)
             {
@@ -94,16 +95,17 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEncuesta(int id, [FromBody] Encuesta encuesta)
+        public async Task<IActionResult> UpdateEncuesta(int id, [FromBody] EncuestaUpdateDto encuestaDto)
         {
            
             try
             {
+                var encuesta = _mapper.Map<Encuesta>(encuestaDto);
 
                 var actualizado = await _encuestaService.UpdateEncuesta(id, encuesta);
 
                 if (actualizado)
-                    return Ok(new ApiResponse<string>("Encuesta actualizada correctamente"));
+                    return Ok(new ApiResponse<string>( "Encuesta actualizada correctamente", true));
                 else
                     return BadRequest(new ApiResponse<string>("No se pudo actualizar la encuesta"));
 

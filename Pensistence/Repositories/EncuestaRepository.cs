@@ -51,7 +51,9 @@ namespace Pensistence.Repositories
 
         public async Task<IEnumerable<Encuesta>> GetAllEncuestas()
         {
-            var encuestas = await _context.Encuestas.ToListAsync();
+            var encuestas = await _context.Encuestas
+                .Include(e => e.Creador)
+                .ToListAsync();
 
             return encuestas;
         }

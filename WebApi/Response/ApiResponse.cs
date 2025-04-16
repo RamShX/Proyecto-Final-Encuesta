@@ -20,6 +20,11 @@
             Success = false;
             Message = mensaje;
         }
+        public ApiResponse(string mensaje, bool success)
+        {
+            Success = success;
+            Message = mensaje;
+        }
 
     }
 }

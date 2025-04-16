@@ -10,6 +10,7 @@ namespace Domain.Mappers
         {
             CreateMap<Usuario, UsuarioRespuestaDto>();
             CreateMap<Usuario, UsuarioInfoBasicoDto>();
+            
 
             CreateMap<CrearEncuestaDto, Encuesta>()
                 .ForMember(dest => dest.Creador, opt => opt.Ignore())  // Ignorar la propiedad Creador en Encuesta porque no lo puse en el DTO
@@ -17,7 +18,9 @@ namespace Domain.Mappers
 
             CreateMap<Encuesta, EncuestaRespuestaDto>()
                 .ForMember(dest => dest.Creador, opt => opt.MapFrom(src => src.Creador));
-              
+            CreateMap<EncuestaUpdateDto, Encuesta>();
+
+
 
 
         }
