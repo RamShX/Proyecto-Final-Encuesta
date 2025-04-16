@@ -22,6 +22,13 @@ namespace Pensistence.Context
                 .HasOne(u => u.Rol)
                 .WithMany(r => r.Usuarios)
                 .HasForeignKey(u => u.RolId);
+
+            //Configurar la relación entre Encuesta y Usuario
+            modelBuilder.Entity<Encuesta>()
+                .HasOne(e => e.Creador)
+                .WithMany(u => u.Encuestas)
+                .HasForeignKey(e => e.UsuarioId);
+
         }
     }
     

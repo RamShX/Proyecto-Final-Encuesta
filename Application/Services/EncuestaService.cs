@@ -25,6 +25,20 @@ namespace Application.Services
             if (entity.FechaInicio >= entity.FechaExpiracion)
                 throw new ArgumentException("La fecha de inicio no puede ser mayor o igual a la fecha de expiracion");
 
+            // mapeo
+            //var encuesta = new Encuesta
+            //{
+            //    Titulo = entity.Titulo,
+            //    Descripcion = entity.Descripcion,
+            //    EsPublica = entity.EsPublica,
+            //    EnlacePublico = entity.EnlacePublico,
+            //    FechaInicio = entity.FechaInicio,
+            //    FechaExpiracion = entity.FechaExpiracion,
+            //    CreadoEn = DateTime.UtcNow,
+            //    ActualizadoEn = DateTime.UtcNow,
+            //    Activo = true,
+            //    UsuarioId = entity.UsuarioId
+            //};
 
             return await _encuestaRepository.AddEncuesta(entity);
         }

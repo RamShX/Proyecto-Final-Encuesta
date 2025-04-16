@@ -33,6 +33,9 @@ namespace WebApi.Controllers
                 //mapeamos el dto a la entidad
                 var encuesta = _mapper.Map<Encuesta>(encuestaDto);
 
+                encuesta.CreadoEn = DateTime.UtcNow;
+                encuesta.ActualizadoEn = DateTime.UtcNow;
+
                 var nuevaEncuesta = await _encuestaService.AddEncuesta(encuesta);
                 return CreatedAtAction(nameof(GetById), new { id = nuevaEncuesta.Id }, 
                     new ApiResponse<Encuesta>(encuesta, "Encuesta creada correctamente"));
@@ -41,9 +44,9 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new ApiResponse<string>(e.Message));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
+                return StatusCode(500, new ApiResponse<string>($"Ocurrió un error inesperado: {e.Message}"));
             }
 
 
@@ -58,15 +61,17 @@ namespace WebApi.Controllers
 
             try
             {
-                return Ok(new ApiResponse<Encuesta>(encuesta, "Encuesta obtenida con éxito"));
+                var encuestaDto = _mapper.Map<EncuestaRespuestaDto>(encuesta);
+
+                return Ok(new ApiResponse<EncuestaRespuestaDto>(encuestaDto, "Encuesta obtenida con éxito"));
             }
             catch (ArgumentException e)
             {
                 return BadRequest(new ApiResponse<string>(e.Message));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
+                return StatusCode(500, new ApiResponse<string>($"Ocurrió un error inesperado: {e.Message}"));
             }
         }
 
@@ -107,9 +112,9 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new ApiResponse<string>(e.Message));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
+                return StatusCode(500, new ApiResponse<string>($"Ocurrió un error inesperado: {e.Message}"));
             }
         }
 
@@ -131,9 +136,9 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new ApiResponse<string>(e.Message));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, new ApiResponse<string>("Ocurrió un error inesperado"));
+                return StatusCode(500, new ApiResponse<string>($"Ocurrió un error inesperado: {e.Message}"));
             }
         }
     }

@@ -40,7 +40,7 @@ namespace Application.Services
             AuthResponseDto authResponseDto = new AuthResponseDto
             {
                 Token = authResult,
-                Expiracion = DateTime.Now.AddMinutes(40),
+                Expiracion = DateTime.Now.AddMinutes(3),
                 Usuario = _mapper.Map<UsuarioRespuestaDto>(usuario)
 
 
