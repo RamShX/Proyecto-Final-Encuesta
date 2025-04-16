@@ -20,10 +20,6 @@ namespace Application.Services
             if (!creador)
                 throw new ArgumentException("El creador de la encuesta no existe");
 
-            // Validar si la encuesta publica 
-            var encuestaPublica = await _encuestaRepository.EncuestaEsPublica(entity.Id);
-            if (!encuestaPublica)
-                throw new ArgumentException("La encuesta no es publica");
 
             // Validar si la fecha de inicio es menor a la fecha de expiracion
             if (entity.FechaInicio >= entity.FechaExpiracion)
@@ -55,10 +51,9 @@ namespace Application.Services
         public async Task<bool> ExisteEncuesta(int id)
         {
             var encuesta = await _encuestaRepository.ExisteEncuesta(id);
-            if (encuesta == null)
-            {
+            if (!encuesta)
                 throw new ArgumentException("La encuesta no existe");
-            }
+
             return encuesta;
         }
 
@@ -84,7 +79,7 @@ namespace Application.Services
 
         public async Task<bool> UpdateEncuesta(int id, Encuesta entity)
         {
-            var encuesta = await _encuestaRepository.GetById(entity.Id);
+            var encuesta = await _encuestaRepository.GetById(id);
 
             if (encuesta == null || encuesta.Id != id)
                 throw new ArgumentException("La encuesta es inválida o el ID no coincide");

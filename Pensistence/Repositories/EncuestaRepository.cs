@@ -44,12 +44,9 @@ namespace Pensistence.Repositories
 
         public async Task<bool> ExisteEncuesta(int id)
         {
-            var encuesta = _context.Encuestas.FindAsync(id);
-            if (encuesta == null)
-            {
-                return false;
-            }
-            return true;
+            var encuesta = await  _context.Encuestas.FindAsync(id);
+
+            return encuesta != null;
         }
 
         public async Task<IEnumerable<Encuesta>> GetAllEncuestas()
