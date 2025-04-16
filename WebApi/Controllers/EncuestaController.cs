@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
+using Domain.Dtos;
+using AutoMapper;
 
 namespace WebApi.Controllers
 {
@@ -11,20 +13,25 @@ namespace WebApi.Controllers
     public class EncuestaController : ControllerBase
     {
         private readonly IEncuestaRepository _encuestaService;
+        private readonly IMapper _mapper;
 
-        public EncuestaController(IEncuestaRepository encuestaService)
+        public EncuestaController(IEncuestaRepository encuestaService, IMapper mapper)
         {
             _encuestaService = encuestaService;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEncuesta([FromBody] Encuesta encuesta)
+        public async Task<IActionResult> AddEncuesta([FromBody] CrearEncuestaDto encuestaDto)
         {
-            if (encuesta == null)
+            if (encuestaDto == null)
                 return BadRequest("La encuesta no puede ser null");
 
             try
             {
+                //mapeamos el dto a la entidad
+                var encuesta = _mapper.Map<Encuesta>(encuestaDto);
+
                 var nuevaEncuesta = await _encuestaService.AddEncuesta(encuesta);
                 return CreatedAtAction(nameof(GetById), new { id = nuevaEncuesta.Id }, nuevaEncuesta);
             }
