@@ -22,6 +22,8 @@ namespace Domain.Models
         public virtual Rol Rol { get; set; }
         //Navegacion usuario puede tener muchas encuestas e inicializarla vacía
         public virtual ICollection<Encuesta> Encuestas { get; set; } = new HashSet<Encuesta>();
+        public virtual ICollection<RespuestaEncuesta> Respuestas { get; set; } = new HashSet<RespuestaEncuesta>();
+        public virtual ICollection<Notificacion> Notificaciones { get; set; } = new HashSet<Notificacion>();
 
     }
 }

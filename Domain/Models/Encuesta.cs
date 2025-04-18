@@ -24,6 +24,6 @@ namespace Domain.Models
         //Navegacion
         public virtual Usuario Creador { get; set; }
 
-        //public virtual ICollection<Pregunta> Preguntas { get; set; } = new List<Pregunta>();
+        public virtual ICollection<Pregunta> Preguntas { get; set; } = new List<Pregunta>();
     }
 }
