@@ -8,9 +8,14 @@ namespace Domain.Mappers
     {
         public AutoMapperProfile()
         {
-            CreateMap<Usuario, UsuarioRespuestaDto>();
-            CreateMap<Usuario, UsuarioInfoBasicoDto>();
-            
+            CreateMap<Usuario, UsuarioResponseDto>();
+            //CreateMap<Usuario, UsuarioInfoBasicoDto>();
+
+            CreateMap<UsuarioManagerDto, Usuario>()
+                .ForMember(dest => dest.PasswordHash , opt => opt.Ignore())
+                .ForMember(dest => dest.CreadoEn, opt => opt.Ignore())
+                .ForMember(dest => dest.ActualizadoEn, opt => opt.Ignore());
+
 
             CreateMap<CrearEncuestaDto, Encuesta>()
                 .ForMember(dest => dest.Creador, opt => opt.Ignore())  // Ignorar la propiedad Creador en Encuesta porque no lo puse en el DTO

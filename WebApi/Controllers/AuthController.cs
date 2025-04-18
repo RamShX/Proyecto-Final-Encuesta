@@ -39,7 +39,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> Register([FromBody] RegistrarUsuarioDto registrarUsuarioDto)
         {
             var usuario = await _authService.RegisterUser(registrarUsuarioDto);
-            return CreatedAtAction(nameof(Register), new ApiResponse<UsuarioRespuestaDto> (usuario, "Usuario registrado con éxito"));
+            return CreatedAtAction(nameof(Register), new ApiResponse<UsuarioResponseDto> (usuario, "Usuario registrado con éxito"));
         }
     }
         

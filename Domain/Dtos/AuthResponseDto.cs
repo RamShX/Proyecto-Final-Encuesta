@@ -5,6 +5,6 @@ namespace Domain.Dtos
     {
         public string Token { get; set; }
         public DateTime Expiracion { get; set; }
-        public UsuarioRespuestaDto Usuario { get; set; }
+        public UsuarioResponseDto Usuario { get; set; }
     }
 }

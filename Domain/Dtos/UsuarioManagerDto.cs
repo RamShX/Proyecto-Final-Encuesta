@@ -1,9 +1,10 @@
 ﻿
+
 using System.Text.Json.Serialization;
 
 namespace Domain.Dtos
 {
-    public class RegistrarUsuarioDto
+    public class UsuarioManagerDto
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
@@ -11,7 +12,6 @@ namespace Domain.Dtos
         public string Email { get; set; }
         public string Password { get; set; }
         public string ConfirmacionPassword { get; set; }
-        [JsonIgnore]
         public int RolId { get; set; }
     }
 }

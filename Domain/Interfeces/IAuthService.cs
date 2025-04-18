@@ -6,7 +6,7 @@ namespace Domain.Interfeces
 {
     public interface IAuthService
     {
-        Task<UsuarioRespuestaDto> RegisterUser(RegistrarUsuarioDto registrarUsuarioDto);
+        Task<UsuarioResponseDto> RegisterUser(RegistrarUsuarioDto registrarUsuarioDto);
         Task<AuthResponseDto> LoginUser(LoginUsuarioDto loginUsuarioDto);
         bool VerifyPasswordHash(string password, string storedHash);
     }

@@ -41,7 +41,7 @@ namespace Application.Services
             {
                 Token = authResult,
                 Expiracion = DateTime.Now.AddMinutes(3),
-                Usuario = _mapper.Map<UsuarioRespuestaDto>(usuario)
+                Usuario = _mapper.Map<UsuarioResponseDto>(usuario)
 
 
             };
@@ -52,7 +52,7 @@ namespace Application.Services
 
 
 
-        public async Task<UsuarioRespuestaDto> RegisterUser(RegistrarUsuarioDto registrarUsuarioDto)
+        public async Task<UsuarioResponseDto> RegisterUser(RegistrarUsuarioDto registrarUsuarioDto)
         {
             // Validar si el email ya existe
             var existeEmail = await _usuarioRepository.ExisteEmail(registrarUsuarioDto.Email);
@@ -75,20 +75,19 @@ namespace Application.Services
                 Apellido = registrarUsuarioDto.Apellido,
                 Email = registrarUsuarioDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registrarUsuarioDto.Password),
-                RolId = registrarUsuarioDto.RolId,
+                RolId = 2,// siempre se registrará como usuario estandar
                 Activo = true,
                 CreadoEn = DateTime.Now,
                 ActualizadoEn = DateTime.Now
             };
 
             // darle respuesta al Frontend
-            var UsuarioRespuestaDto = new UsuarioRespuestaDto
+            var UsuarioRespuestaDto = new UsuarioResponseDto
             {
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
-                Email = usuario.Email,
-                RolId = usuario.RolId,
+                Email = usuario.Email
             };
 
             await _usuarioRepository.AddUsuario(usuario);

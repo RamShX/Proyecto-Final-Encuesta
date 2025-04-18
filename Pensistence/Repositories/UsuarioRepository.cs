@@ -1,4 +1,5 @@
-﻿using Domain.Interfeces;
+﻿using Domain.Dtos;
+using Domain.Interfeces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Pensistence.Context;
@@ -27,9 +28,19 @@ namespace Pensistence.Repositories
             return await _context.Usuarios.AnyAsync(u => u.Email == email);
         }
 
-        public async Task<IEnumerable<Usuario>> GetAllUsuarios()
+        public async Task<IEnumerable<UsuarioResponseDto>> GetAllUsuarios()
         {
-            var usuarios = await _context.Usuarios.ToListAsync();
+            var usuarios = await _context.Usuarios
+                .Include(u => u.Rol)
+                .Select(u => new UsuarioResponseDto
+                {
+                    Id = u.Id,
+                    Nombre = u.Nombre,
+                    Apellido = u.Apellido,
+                    Email = u.Email,
+                    RolNombre = u.Rol.Nombre,
+                })
+                .ToListAsync();
             return usuarios;
 
         }

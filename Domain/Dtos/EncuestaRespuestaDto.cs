@@ -10,6 +10,6 @@ namespace Domain.Dtos
         public string EnlacePublico { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaExpiracion { get; set; }
-        public UsuarioInfoBasicoDto Creador { get; set; } 
+        public UsuarioResponseDto Creador { get; set; } 
     }
 }
