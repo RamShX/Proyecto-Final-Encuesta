@@ -1,12 +1,12 @@
-﻿using Domain.Models;
+﻿using Domain.Dtos;
 
 namespace Domain.Interfeces
 {
     public interface IPreguntaService
     {
-        Task<bool> CrearPregunta(Pregunta pregunta);
-        Task<bool> ActualizarPregunta(Pregunta pregunta);
+        Task<bool> CrearPregunta(PreguntaDto pregunta);
+        Task<bool> ActualizarPregunta(PreguntaDto pregunta);
         Task<bool> EliminarPregunta(int id);
-        Task<List<Pregunta>> GetPreguntasByEncuestaId(int encuestaId);
+        Task<List<PreguntaDto>> GetPreguntasByEncuestaId(int encuestaId);
     }
 }
