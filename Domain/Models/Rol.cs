@@ -1,7 +1,9 @@
 ﻿using Domain.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
+    [Table("Roles")]
     public class Rol : AuditableEntitiy
     {
         public int Id { get; set; }

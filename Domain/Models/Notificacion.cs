@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
+    [Table("notificaciones")]
     public class Notificacion
     {
         public int Id { get; set; }

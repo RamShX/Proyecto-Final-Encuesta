@@ -3,6 +3,7 @@ using Domain.Base;
 
 namespace Domain.Models
 {
+    [Table("Preguntas")]
     public class Pregunta : AuditableEntitiy
     {
         public int Id { get; set; }

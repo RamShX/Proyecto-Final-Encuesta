@@ -1,9 +1,8 @@
 ﻿using Domain.Base;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-
 namespace Domain.Models
 {
+    [Table("usuarios")]
     public class Usuario : AuditableEntitiy
     {
         public int Id { get; set; }

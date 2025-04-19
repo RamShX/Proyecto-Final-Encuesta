@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
+    [Table("encuestas")]
     public class Encuesta : AuditableEntitiy
     {
         public int Id { get; set; }
