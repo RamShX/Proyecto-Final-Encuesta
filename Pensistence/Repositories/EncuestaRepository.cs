@@ -62,6 +62,7 @@ namespace Pensistence.Repositories
         {
             var encuesta = await _context.Encuestas
                 .Include(e => e.Creador)
+                    .ThenInclude(e => e.Rol)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             //if (encuesta == null)

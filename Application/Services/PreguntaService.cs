@@ -30,6 +30,11 @@ namespace Application.Services
             if (encuesta == null)
                 throw new ArgumentException("Encuesta no encontrada");
 
+            //validar si el orden de pregunta se repite
+            var preguntaExistente = await _preguntaRepository.GetByOrden(preguntaDto.Orden, preguntaDto.EncuestaId);
+            if (preguntaExistente != null)
+                throw new ArgumentException($"Ya existe una pregunta con el orden {preguntaDto.Orden} en la encuesta {preguntaDto.EncuestaId}");
+
 
             var pregunta = new Pregunta
             {
@@ -50,7 +55,7 @@ namespace Application.Services
                     var opcionRespuesta = new OpcionRespuesta
                     {
                         Texto = opcion.Texto,
-                        Valor = opcion.Valor,
+                        Valor = preguntaDto.TipoPregunta == TipoPregunta.escala ? (opcion.Valor ?? 0 ): 0,
                         Orden = opcion.Orden,
                         CreadoEn = DateTime.UtcNow,
                         ActualizadoEn = DateTime.UtcNow,

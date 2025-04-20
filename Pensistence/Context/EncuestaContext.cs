@@ -44,7 +44,7 @@ namespace Pensistence.Context
             //Relacion de OpcionRespuesta
             modelBuilder.Entity<OpcionRespuesta>()
                 .HasOne(o => o.Pregunta)
-                .WithMany(p => p.Opciones)
+                .WithMany(p => p.OpcionesRespuesta)
                 .HasForeignKey(o => o.PreguntaId);
 
             //relacion de RespuestaEncuesta

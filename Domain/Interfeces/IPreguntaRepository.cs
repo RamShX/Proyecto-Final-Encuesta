@@ -10,5 +10,6 @@ namespace Domain.Interfeces
         Task<Pregunta> AddAsync(Pregunta pregunta);
         Task UpdateAsync(Pregunta pregunta);
         Task DeleteAsync(int id);
+        Task<Pregunta> GetByOrden(int orden, int encuestaId);
     }
 }

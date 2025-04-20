@@ -47,6 +47,12 @@ namespace Pensistence.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public Task<Pregunta> GetByOrden(int orden, int encuestaId)
+        {
+            return _context.Preguntas
+                .FirstOrDefaultAsync(p => p.Orden == orden && p.EncuestaId == encuestaId);
+        }
+
         public async Task UpdateAsync(Pregunta pregunta)
         {
             _context.Entry(pregunta).State = EntityState.Modified;
