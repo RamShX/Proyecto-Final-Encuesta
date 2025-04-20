@@ -1,83 +1,56 @@
-﻿
-
-using Domain.Dtos;
-using Domain.Interfeces;
+﻿using Domain.Interfeces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Pensistence.Context;
 
 namespace Pensistence.Repositories
 {
-    public class PreguntaRepository : IPreguntaService
+    public class PreguntaRepository : IPreguntaRepository
     {
         private readonly EncuestaContext _context;
+
         public PreguntaRepository(EncuestaContext context)
         {
             _context = context;
         }
 
-        public async Task<bool> ActualizarPregunta(int id,PreguntaDto pregunta)
+        public async Task<Pregunta> AddAsync(Pregunta pregunta)
         {
-
-            var entity = await _context.Preguntas.FindAsync(id);
-
-            if (entity == null)
-                 return false;
-
-            entity.Texto = pregunta.Texto;
-            entity.TipoPregunta = pregunta.TipoPregunta;
-            entity.Orden = pregunta.Orden;
-            entity.Obligatorio = pregunta.Obligatorio;
-            entity.EncuestaId = pregunta.EncuestaId;
-;
+            _context.Preguntas.Add(pregunta);
             await _context.SaveChangesAsync();
-            return true;
-
+            return pregunta;
 
         }
 
-        public async Task<int> CrearPregunta(PreguntaDto pregunta)
+        public async Task DeleteAsync(int id)
         {
-            var entity = new Pregunta
-            {
-                Texto = pregunta.Texto,
-                TipoPregunta = pregunta.TipoPregunta,
-                Orden = pregunta.Orden,
-                Obligatorio = pregunta.Obligatorio,
-                EncuestaId = pregunta.EncuestaId
-            };
+            var pregunta = _context.Preguntas.FindAsync(id);
+            if (pregunta != null)
+                _context.Preguntas.Remove(pregunta.Result);
+                await _context.SaveChangesAsync();
 
-            _context.Preguntas.Add(entity);
-            await _context.SaveChangesAsync();
-            return entity.Id;
         }
 
-        public async  Task<bool> EliminarPregunta(int id)
+        public async Task<IEnumerable<Pregunta>> GetAllByEncuestaIdAsync(int encuestaId)
         {
-            var pregunta = await _context.Preguntas.FindAsync(id);
-
-            if (pregunta == null)
-                return false;
-
-            _context.Preguntas.Remove(pregunta);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<List<PreguntaDto>> GetPreguntasByEncuestaId(int encuestaId)
-        {
-            var preguntas = await _context.Preguntas
+            return await _context.Preguntas
+                .Include(p => p.OpcionesRespuesta)
                 .Where(p => p.EncuestaId == encuestaId)
+                .OrderBy(p => p.Orden)
                 .ToListAsync();
+        }
 
-            return preguntas.Select(p => new PreguntaDto
-            {
-                Texto = p.Texto,
-                TipoPregunta = p.TipoPregunta,
-                Orden = p.Orden,
-                Obligatorio = p.Obligatorio,
-                EncuestaId = p.EncuestaId
-            }).ToList();
+        public async Task<Pregunta> GetByIdAsync(int id)
+        {
+            return await _context.Preguntas
+                .Include(p => p.OpcionesRespuesta)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task UpdateAsync(Pregunta pregunta)
+        {
+            _context.Entry(pregunta).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
     }
 }

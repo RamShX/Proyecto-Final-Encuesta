@@ -17,7 +17,7 @@ namespace Domain.Models
 
         //Navegacion y relaciones
         public virtual Encuesta Encuesta { get; set; }
-        public virtual ICollection<OpcionRespuesta> Opciones { get; set; } = new List<OpcionRespuesta>();
+        public virtual ICollection<OpcionRespuesta> OpcionesRespuesta { get; set; } = new List<OpcionRespuesta>();
 
     }
 

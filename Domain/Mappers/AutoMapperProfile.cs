@@ -25,9 +25,20 @@ namespace Domain.Mappers
                 .ForMember(dest => dest.Creador, opt => opt.MapFrom(src => src.Creador));
             CreateMap<EncuestaUpdateDto, Encuesta>();
 
+            //
+            CreateMap<Pregunta, PreguntaDto>()
+                .ForMember(dest => dest.OpcionesRespuesta, opt => opt.MapFrom(src =>
+                    src.OpcionesRespuesta.OrderBy(o => o.Orden)
+                    .Select(o => new OpcionRespuestaDto 
+                    {
+                        Id = o.Id,
+                        Texto = o.Texto,
+                        Valor = o.Valor,
+                        Orden = o.Orden
+                    }).ToList()));
 
-
-
+            CreateMap<OpcionRespuesta, OpcionRespuestaDto>();
         }
     }
+    
 }

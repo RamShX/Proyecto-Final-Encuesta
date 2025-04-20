@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using Application.Interfeces;
 
 
 namespace WebApi
@@ -26,8 +27,11 @@ namespace WebApi
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IJwtService, JwtRepository>();
             builder.Services.AddScoped<IEncuestaRepository, EncuestaRepository>();
+            builder.Services.AddScoped<IPreguntaService, PreguntaService>();
+            builder.Services.AddScoped<IPreguntaRepository, PreguntaRepository>();
             builder.Services.AddScoped<EncuestaService>();
             builder.Services.AddScoped<UsuarioService>();
+
 
             // Configurar JsonOptions para evitar ciclos de referencia 
             builder.Services.AddControllers().AddJsonOptions(options =>

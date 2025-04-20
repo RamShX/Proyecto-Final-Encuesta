@@ -1,80 +1,151 @@
 ﻿
+using Application.Interfeces;
+using AutoMapper;
 using Domain.Dtos;
 using Domain.Enum;
 using Domain.Interfeces;
+using Domain.Models;
 
 namespace Application.Services
 {
     public class PreguntaService : IPreguntaService
     {
-        private readonly IPreguntaService _preguntaRepository;
-        public PreguntaService(IPreguntaService preguntaRepository)
+        private readonly IPreguntaRepository _preguntaRepository;
+        private readonly IEncuestaRepository _encuestaRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IMapper _mapper;
+
+        public PreguntaService(IPreguntaRepository preguntaRepository, IEncuestaRepository encuestaRepository, IUsuarioRepository usuarioRepository, IMapper mapper)
         {
             _preguntaRepository = preguntaRepository;
+            _encuestaRepository = encuestaRepository;
+            _usuarioRepository = usuarioRepository;
+            _mapper = mapper;
         }
 
-        public Task<bool> ActualizarPregunta(int id, PreguntaDto pregunta)
+        public async Task<PreguntaDto> CreateAsync(PreguntaCreateDto preguntaDto)
         {
-            // Validar si la pregunta existe
-            var preguntaExistente = _preguntaRepository.GetPreguntasByEncuestaId(id);
-            if (preguntaExistente == null)
-                throw new ArgumentException("La pregunta no existe");
-
-            // Validar si el texto de la pregunta es nulo o vacio
-            if (string.IsNullOrEmpty(pregunta.Texto))
-                throw new ArgumentException("El texto de la pregunta no puede ser nulo o vacio");
-
-            // Validar si el tipo de pregunta es valido
-            if (pregunta.TipoPregunta != TipoPregunta.opcionMultiple && pregunta.TipoPregunta != TipoPregunta.escala)
-                throw new ArgumentException("El tipo de pregunta no es valido");
-
-            // Validar si el orden de la pregunta es menor a 0
-            if (pregunta.Orden < 0)
-                throw new ArgumentException("El orden de la pregunta no puede ser menor a 0");
-
-            return _preguntaRepository.ActualizarPregunta(id, pregunta);
-        }
-
-        public Task<int> CrearPregunta(PreguntaDto pregunta)
-        {
-            // Validar si la encuesta existe
-            var encuesta = _preguntaRepository.GetPreguntasByEncuestaId(pregunta.EncuestaId);
+            //Validar si eciste la encuesta
+            var encuesta = await _encuestaRepository.GetById(preguntaDto.EncuestaId);
             if (encuesta == null)
-                throw new ArgumentException("La encuesta no existe");
+                throw new ArgumentException("Encuesta no encontrada");
 
-            // Validar si el texto de la pregunta es nulo o vacio
-            if (string.IsNullOrEmpty(pregunta.Texto))
-                throw new ArgumentException("El texto de la pregunta no puede ser nulo o vacio");
-            // Validar si el tipo de pregunta es valido
-            if (pregunta.TipoPregunta != TipoPregunta.opcionMultiple && pregunta.TipoPregunta != TipoPregunta.escala)
-                throw new ArgumentException("El tipo de pregunta no es valido");
-            // Validar si el orden de la pregunta es menor a 0
-            if (pregunta.Orden < 0)
-                throw new ArgumentException("El orden de la pregunta no puede ser menor a 0");
-    
 
-            return _preguntaRepository.CrearPregunta(pregunta);
+            var pregunta = new Pregunta
+            {
+                EncuestaId = preguntaDto.EncuestaId,
+                Texto = preguntaDto.Texto,
+                TipoPregunta = preguntaDto.TipoPregunta,
+                Orden = preguntaDto.Orden,
+                Obligatorio = preguntaDto.Obligatorio,
+                CreadoEn = DateTime.UtcNow,
+                ActualizadoEn = DateTime.UtcNow,
+            };
+
+            //Agregar las opciones de respuesta
+            if (preguntaDto.OpcionesRespuesta != null && preguntaDto.OpcionesRespuesta.Count > 0)
+            {
+                foreach (var opcion in preguntaDto.OpcionesRespuesta)
+                {
+                    var opcionRespuesta = new OpcionRespuesta
+                    {
+                        Texto = opcion.Texto,
+                        Valor = opcion.Valor,
+                        Orden = opcion.Orden,
+                        CreadoEn = DateTime.UtcNow,
+                        ActualizadoEn = DateTime.UtcNow,
+                    };
+                    pregunta.OpcionesRespuesta.Add(opcionRespuesta);
+                }
+            }
+
+
+            var preguntaCreada = await _preguntaRepository.AddAsync(pregunta);
+            return _mapper.Map<PreguntaDto>(preguntaCreada);
         }
 
-        public Task<bool> EliminarPregunta(int id)
+        public async Task DeleteAsync(int id)
         {
-            // Validar si la pregunta existe
-            var pregunta = _preguntaRepository.GetPreguntasByEncuestaId(id);
-
+            var pregunta = await _preguntaRepository.GetByIdAsync(id);
             if (pregunta == null)
-                throw new ArgumentException("La pregunta no existe");
+                throw new ArgumentException($"Pregunta con Id {id} no encontrada");
 
-            return _preguntaRepository.EliminarPregunta(id);
+            await _preguntaRepository.DeleteAsync(id);
+
         }
 
-        public Task<List<PreguntaDto>> GetPreguntasByEncuestaId(int encuestaId)
+        public async Task<PreguntaDto> GetByIdAsync(int id)
         {
-            // Validar si la encuesta existe
-            var encuesta = _preguntaRepository.GetPreguntasByEncuestaId(encuestaId);
-            if (encuesta == null)
-                throw new ArgumentException("La encuesta no existe");
+            var pregunta = await _preguntaRepository.GetByIdAsync(id);
+            if (pregunta == null)
+                throw new ArgumentException("Pregunta no encontrada");
 
-            return _preguntaRepository.GetPreguntasByEncuestaId(encuestaId);
+            return _mapper.Map<PreguntaDto>(pregunta);
+        }
+
+        public async Task UpdateAsync(PreguntaUpdateDto preguntaDto)
+        {
+            var preguntaExistente = await _preguntaRepository.GetByIdAsync(preguntaDto.Id);
+            if (preguntaExistente == null)
+                throw new ArgumentException($"Pregunta con Id {preguntaDto.Id} no encontrada");
+
+            // Actualizar propiedades
+            preguntaExistente.Texto = preguntaDto.Texto;
+            preguntaExistente.TipoPregunta = preguntaDto.TipoPregunta;
+            preguntaExistente.Orden = preguntaDto.Orden;
+            preguntaExistente.Obligatorio = preguntaDto.Obligatoria;
+            preguntaExistente.ActualizadoEn = DateTime.Now;
+
+            // Actualizar opciones de respuesta si se proporcionan
+     
+            if (preguntaDto.OpcionesRespuesta != null)
+            {
+                // Borrar opciones existentes que no están en el DTO
+                var opcionesExistentes = preguntaExistente.OpcionesRespuesta.ToList();
+                var opcionesAMantener = preguntaDto.OpcionesRespuesta
+                    .Where(o => o.Id > 0)
+                    .Select(o => o.Id)
+                    .ToList();
+
+                var opcionesABorrar = opcionesExistentes
+                    .Where(o => !opcionesAMantener.Contains(o.Id))
+                    .ToList();
+
+                foreach (var opcion in opcionesABorrar)
+                {
+                    preguntaExistente.OpcionesRespuesta.Remove(opcion);
+                }
+
+                // Actualizar opciones existentes
+                foreach (var opcionDto in preguntaDto.OpcionesRespuesta.Where(o => o.Id > 0))
+                {
+                    var opcion = opcionesExistentes.FirstOrDefault(o => o.Id == opcionDto.Id);
+                    if (opcion != null)
+                    {
+                        opcion.Texto = opcionDto.Texto;
+                        opcion.Valor = opcionDto.Valor ?? 0;
+                        opcion.Orden = opcionDto.Orden;
+                        opcion.ActualizadoEn = DateTime.Now;
+                    }
+                }
+
+                // Agregar nuevas opciones
+                foreach (var opcionDto in preguntaDto.OpcionesRespuesta.Where(o => o.Id == 0))
+                {
+                    preguntaExistente.OpcionesRespuesta.Add(new OpcionRespuesta
+                    {
+                        Texto = opcionDto.Texto,
+                        Valor = opcionDto.Valor ?? 0,
+                        Orden = opcionDto.Orden,
+                        CreadoEn = DateTime.Now,
+                        ActualizadoEn = DateTime.Now
+                    });
+                }
+            }
+
+            await _preguntaRepository.UpdateAsync(preguntaExistente);
+
+
         }
     }
 }

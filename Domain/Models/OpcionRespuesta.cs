@@ -9,8 +9,8 @@ namespace Domain.Models
         public int Id { get; set; }
         public int PreguntaId { get; set; }
         public string Texto { get; set; }
-        public int valor { get; set; }
-        public int orden { get; set; }
+        public int Valor { get; set; }
+        public int Orden { get; set; }
 
         public Pregunta Pregunta { get; set; }
         
