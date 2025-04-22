@@ -16,8 +16,8 @@ namespace Domain.Models
         [Column("creado_en")]
         public DateTime creadoEn { get; set; } = DateTime.UtcNow;
 
-        public Encuesta encuesta { get; set; }
-        public Usuario usuario { get; set; }
+        public virtual Encuesta encuesta { get; set; }
+        public virtual Usuario usuario { get; set; }
         public ICollection<RespuestaPregunta> RespuestasPreguntas { get; set; } = new List<RespuestaPregunta>();
     }
 }
