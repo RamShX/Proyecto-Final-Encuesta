@@ -193,12 +193,17 @@ namespace Application.Services
             // un modelo notificacion
             var notificacionAdmin = new CrearNotificacionDto
             {
-                Tipo = "EncuestaRespondida",
+                EncuestaId = respuesta.EncuestaId,
+                Tipo = "email",
                 Mensaje = $"Un usuario ha respondido la encuesta {respuesta.EncuestaId}"
             };
 
             //crear notificacion con factory y enviar mensaje
-            var notificador = NotificacionFactory.CrearNotificacion("email", _logger, _config);
+            var notificador = NotificacionFactory.CrearNotificacion(notificacionAdmin.Tipo, _logger, _config);
+            if (notificador == null)
+            {
+                throw new ArgumentException("Error al crear la notificación");
+            }
 
             await notificador.enviar(notificacionAdmin);
 

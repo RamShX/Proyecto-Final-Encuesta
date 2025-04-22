@@ -33,10 +33,12 @@ namespace WebApi
             builder.Services.AddScoped<IPreguntaRepository, PreguntaRepository>();
             builder.Services.AddScoped<EncuestaService>();
             builder.Services.AddScoped<UsuarioService>();
+            builder.Services.AddScoped<IRespuestaRepository, RespuestaRepository>();
+            builder.Services.AddScoped<IRespuestaService, RespuestaService>();
 
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             builder.Services.AddLogging();
-            builder.Services.AddScoped<INotificacion, NotificacionEmail>();
+            
 
 
             // Configurar JsonOptions para evitar ciclos de referencia 
