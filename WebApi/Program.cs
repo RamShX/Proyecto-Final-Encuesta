@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using Application.Interfeces;
+using Application.Factory.Interfeces;
+using Application.Factory.Models;
 
 
 namespace WebApi
@@ -31,6 +33,10 @@ namespace WebApi
             builder.Services.AddScoped<IPreguntaRepository, PreguntaRepository>();
             builder.Services.AddScoped<EncuestaService>();
             builder.Services.AddScoped<UsuarioService>();
+
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            builder.Services.AddLogging();
+            builder.Services.AddScoped<INotificacion, NotificacionEmail>();
 
 
             // Configurar JsonOptions para evitar ciclos de referencia 

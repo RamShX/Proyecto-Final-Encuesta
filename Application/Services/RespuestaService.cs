@@ -1,9 +1,14 @@
 ﻿
+using Application.Factory.BaseFactory;
+using Application.Factory.Interfeces;
+using Application.Factory.Models;
 using Application.Interfeces;
 using AutoMapper;
 using Domain.Dtos;
 using Domain.Interfeces;
 using Domain.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
@@ -12,10 +17,14 @@ namespace Application.Services
         private readonly IRespuestaRepository _respuestaRepository;
         private readonly IEncuestaRepository _encuestaRepository;
         private readonly IMapper _mapper;
-        public RespuestaService(IRespuestaRepository respuestaRepository, IEncuestaRepository encuestaRepository, IMapper mapper)
+        private readonly IConfiguration _config;
+        private readonly ILogger<NotificacionEmail> _logger;
+        public RespuestaService(IRespuestaRepository respuestaRepository, IEncuestaRepository encuestaRepository,IMapper mapper, IConfiguration confi, ILogger<NotificacionEmail>logger)
         {
             _respuestaRepository = respuestaRepository;
             _encuestaRepository = encuestaRepository;
+            _config = confi;
+            _logger = logger;
             _mapper = mapper;
         }
 
@@ -180,6 +189,19 @@ namespace Application.Services
             var respuestaGuardada = _respuestaRepository.GuardarRespuesta(repuesta);
             if (respuestaGuardada == null)
                 throw new Exception("Error al guardar la respuesta");
+
+            // un modelo notificacion
+            var notificacionAdmin = new CrearNotificacionDto
+            {
+                Tipo = "EncuestaRespondida",
+                Mensaje = $"Un usuario ha respondido la encuesta {respuesta.EncuestaId}"
+            };
+
+            //crear notificacion con factory y enviar mensaje
+            var notificador = NotificacionFactory.CrearNotificacion("email", _logger, _config);
+
+            await notificador.enviar(notificacionAdmin);
+
 
             //Mapear a Dto y devolver
             return _mapper.Map<RespuestaEncuestaDto>(respuestaGuardada);

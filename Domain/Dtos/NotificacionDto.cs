@@ -1,7 +1,5 @@
 ﻿
 
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-
 namespace Domain.Dtos
 {
     public class NotificacionDto
